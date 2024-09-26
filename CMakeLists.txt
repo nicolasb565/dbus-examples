@@ -2,4 +2,11 @@ cmake_minimum_required(VERSION 3.24.0)
 
 project(dbus_examples)
 
-add_executable (dbus_examples main.cpp)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBSYSTEMD REQUIRED libsystemd)
+
+add_executable (dbus_server main_server.cpp)
+add_executable (dbus_client main_client.cpp)
+
+target_link_libraries(dbus_server ${LIBSYSTEMD_LIBRARIES})
+target_link_libraries(dbus_client ${LIBSYSTEMD_LIBRARIES})
