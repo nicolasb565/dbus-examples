@@ -19,9 +19,9 @@ int main() {
 
     /* Issue the method call and store the respons message in m */
     r = sd_bus_call_method(bus,
-                            "org.nicolas.Example",           /* service to contact */
-                            "/org/nicolas/Example",          /* object path */
-                            "org.nicolas.Example",   /* interface name */
+                            "org.nicolas.ServerExample",           /* service to contact */
+                            "/org/nicolas/ServerExample",          /* object path */
+                            "org.nicolas.ServerExample",   /* interface name */
                             "Greating",                          /* method name */
                             &error,                               /* object to return error in */
                             &m,                                   /* return message on success */
