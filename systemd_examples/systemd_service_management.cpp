@@ -60,8 +60,34 @@ NAME                                       TYPE      SIGNATURE        RESULT/VAL
  * I know from looking at output from systemctl that cups (common unix printing service) is running, but I really do not care because I have no printer
  * It is unfortunate that there is not more documentation about the args for now, would either need to use systemctl while monitoring or look at documentation from systemd
  * I tried monitoring command "sudo systemctl stop cups" but I do not see any use of StopUnit and the whole thing is very chatty and convoluted
- * Documentation from systemd says the folowing:
  * 
+ * I found out with option --xml-interface when introspecting dbus object, I can get parameter names
+ * <method name="StartUnit">
+   <arg type="s" name="name" direction="in"/>
+   <arg type="s" name="mode" direction="in"/>
+   <arg type="o" name="job" direction="out"/>
+  </method>
+  <method name="StartUnitWithFlags">
+   <arg type="s" name="name" direction="in"/>
+   <arg type="s" name="mode" direction="in"/>
+   <arg type="t" name="flags" direction="in"/>
+   <arg type="o" name="job" direction="out"/>
+  </method>
+  <method name="StartUnitReplace">
+   <arg type="s" name="old_unit" direction="in"/>
+   <arg type="s" name="new_unit" direction="in"/>
+   <arg type="s" name="mode" direction="in"/>
+   <arg type="o" name="job" direction="out"/>
+  </method>
+  <method name="StopUnit">
+   <arg type="s" name="name" direction="in"/>
+   <arg type="s" name="mode" direction="in"/>
+   <arg type="o" name="job" direction="out"/>
+  </method>
+ *
+ * Still this is not enough, need to look at systemd documentation
+ * 
+ * Documentation from systemd says the folowing:
  * StartUnit() enqueues a start job and possibly depending jobs.
  * It takes the unit to activate and a mode string as arguments.
  * The mode needs to be one of "replace", "fail", "isolate", "ignore-dependencies", or "ignore-requirements".
@@ -95,6 +121,7 @@ o "/org/freedesktop/systemd1/job/3607"
  * and enduser would typicaly get prompted to enter login credentials
  * 
  * I used the command "systemctl is-active cups" to see if this program start and stop cups service
+ * 
  * */
 
 std::atomic_bool stop_process = false;
