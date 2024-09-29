@@ -36,7 +36,11 @@ static int method_greating(sd_bus_message* m, void* userdata, sd_bus_error* ret_
 
 static const sd_bus_vtable example_vtable[] = {
         SD_BUS_VTABLE_START(0),
-        SD_BUS_METHOD("Greating", "s", "s", method_greating, SD_BUS_VTABLE_UNPRIVILEGED),
+        SD_BUS_METHOD_WITH_ARGS("Greating",
+            SD_BUS_ARGS("s", caller_name),
+            SD_BUS_RESULT("s", response),
+            method_greating,
+            SD_BUS_VTABLE_UNPRIVILEGED),
         SD_BUS_VTABLE_END
 };
 

@@ -7,6 +7,58 @@
 #include <errno.h>
 #include <systemd/sd-bus.h>
 
+/*
+ * I changed the vtable to make sure we can introspect arguments name
+ * busctl --user introspect org.nicolas.ServerExample /org/nicolas/ServerExample org.nicolas.ServerExample --xml-interface
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"https://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+ <interface name="org.freedesktop.DBus.Peer">
+  <method name="Ping"/>
+  <method name="GetMachineId">
+   <arg type="s" name="machine_uuid" direction="out"/>
+  </method>
+ </interface>
+ <interface name="org.freedesktop.DBus.Introspectable">
+  <method name="Introspect">
+   <arg name="xml_data" type="s" direction="out"/>
+  </method>
+ </interface>
+ <interface name="org.freedesktop.DBus.Properties">
+  <method name="Get">
+   <arg name="interface_name" direction="in" type="s"/>
+   <arg name="property_name" direction="in" type="s"/>
+   <arg name="value" direction="out" type="v"/>
+  </method>
+  <method name="GetAll">
+   <arg name="interface_name" direction="in" type="s"/>
+   <arg name="props" direction="out" type="a{sv}"/>
+  </method>
+  <method name="Set">
+   <arg name="interface_name" direction="in" type="s"/>
+   <arg name="property_name" direction="in" type="s"/>
+   <arg name="value" direction="in" type="v"/>
+  </method>
+  <signal name="PropertiesChanged">
+   <arg type="s" name="interface_name"/>
+   <arg type="a{sv}" name="changed_properties"/>
+   <arg type="as" name="invalidated_properties"/>
+  </signal>
+ </interface>
+ <interface name="org.nicolas.ServerExample">
+  <method name="Greating">
+   <arg type="s" name="caller_name" direction="in"/>
+   <arg type="s" name="response" direction="out"/>
+  </method>
+ </interface>
+</node>
+ *
+ * We can test using following command:
+ * busctl --user call org.nicolas.ServerExample /org/nicolas/ServerExample org.nicolas.ServerExample Greating s patate
+s "hello patate"
+ * 
+*/
+
 std::atomic_bool stop_process = false;
 
 void sighandler(int signum) {
@@ -34,7 +86,11 @@ static int method_greating(sd_bus_message* m, void* userdata, sd_bus_error* ret_
 
 static const sd_bus_vtable example_vtable[] = {
         SD_BUS_VTABLE_START(0),
-        SD_BUS_METHOD("Greating", "s", "s", method_greating, SD_BUS_VTABLE_UNPRIVILEGED),
+        SD_BUS_METHOD_WITH_ARGS("Greating",
+            SD_BUS_ARGS("s", caller_name),
+            SD_BUS_RESULT("s", response),
+            method_greating,
+            SD_BUS_VTABLE_UNPRIVILEGED),
         SD_BUS_VTABLE_END
 };
 
