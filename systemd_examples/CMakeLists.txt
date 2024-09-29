@@ -1,0 +1,4 @@
+add_executable (systemd_service_management systemd_service_management.cpp)
+
+target_link_libraries(systemd_service_management ${LIBSYSTEMD_LIBRARIES})
+

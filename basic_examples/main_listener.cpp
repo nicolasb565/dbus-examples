@@ -34,7 +34,6 @@ int main() {
     sd_bus *bus = NULL;
     int r;
 
-    /* Connect to the system bus */
     r = sd_bus_open_user(&bus);
     if (r < 0) {
         std::cerr << "Failed to connect to user bus: " << strerror(-r) << std::endl;
