@@ -77,7 +77,7 @@ static int method_greating(sd_bus_message* m, void* userdata, sd_bus_error* ret_
         }
     }
     else {
-        fprintf(stderr, "Failed to parse parameters: %s\n", strerror(-r));
+        std::cerr << "Failed to parse parameters: " << strerror(-r) << std::endl;
         return r;
     }
     
